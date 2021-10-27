@@ -14,7 +14,6 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
-//todo
 
 const materialChest = new THREE.MeshPhongMaterial({color: 0xC1AB51});
 const cube = new THREE.Mesh( new THREE.BoxGeometry(1.3, 4, 1), materialChest );
