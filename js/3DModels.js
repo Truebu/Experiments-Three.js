@@ -1,7 +1,7 @@
 import * as THREE from "../build/three.module.js";
 import { OrbitControls } from "../jsm/OrbitControls.js";
 import Stats  from "../jsm/stats.module.js";
-import {GUI} from "../jsm/dat.gui.module.js";
+import { GLTFLoader } from '../jsm/GLTFLoader.js';
 
 const scene = new THREE.Scene();
 scene.background= new THREE.Color( 0xFEFDFC );
@@ -44,25 +44,18 @@ const createStats = function(){
     return stats;
 }
 
-const random = function(limit){
-    const variable = Math.floor(Math.random()*(limit))+1;
-    return variable;
-}
+//Create a script using 3D model
+const loader = new GLTFLoader();
 
-const manageControls = new function(){
-    this.addBuilding = function(){
-        const material = new THREE.MeshPhongMaterial({color: "#" + random(16777215).toString(16)});
-        const cube = new THREE.Mesh( new THREE.BoxGeometry(2, random(35), 2), material );
-        cube.position.x = random(50)-random(50);
-        cube.position.z = random(50)-random(50);
-        scene.add(cube);
-    }
-}
+loader.load( '../assets/teapot.glb', function ( gltf ) {
+    gltf.scene.position.y = 5;
+	scene.add( gltf.scene );
 
-const createDataGui = function() {
-    const gui = new GUI();
-    gui.add(manageControls, "addBuilding");
-}
+}, undefined, function ( error ) {
+
+	console.error( error );
+
+} );
 
 camera.position.z = 50;
 
@@ -74,4 +67,3 @@ const animate= function() {
 }
 animate();
 createStats();
-createDataGui();
