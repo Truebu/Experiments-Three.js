@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>My first three.js app</title>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/94/three.min.js"
+    integrity="sha512-ZGgXd6TB5qjtvTU6Q5o/LJM4pwLNy8U8XXJh+vJZDXp2wC8ASrl4WOeivaq2fpYc3TnTCLzyDvVjY8YhvNYaXg=="
+    crossorigin="anonymous"
+    ></script>
+    <script src="../jsm/OrbitControls.js" type="module"></script>
+    <script src='../jsm/threex.keyboardstate.js'></script>
+
+    <script>
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xFEFDFC);
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        const cpu = new THREE.Mesh(new THREE.BoxGeometry(8, 1, 2), new THREE.MeshToonMaterial({ color: 0x46DCBE }));
+        cpu.position.y = 4.5;
+        scene.add(cpu);
+
+        const player = new THREE.Mesh(new THREE.BoxGeometry(8, 1, 2), new THREE.MeshToonMaterial({ color: 0xcccc00 }));
+        player.position.y = -4.5;
+        scene.add(player);
+
+        const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5), new THREE.MeshToonMaterial({ color: 0x000000 }));
+        scene.add(sphere);
+
+        const updateFcts = [];
+
+        const keyboard = new THREEx.KeyboardState();
+
+        updateFcts.push(function (delta, now) {
+            if (keyboard.pressed('a')) {
+                player.position.x -= 5 * delta;
+            }
+            if (keyboard.pressed('d')) {
+                player.position.x += 5 * delta;
+            }
+        });
+
+        updateFcts.push(function () {
+            renderer.render(scene, camera);
+        });
+
+        const light = new THREE.DirectionalLight(0xffffff);
+        light.position.set(1, 1, 1);
+        scene.add(light);
+
+        window.addEventListener("resize", resize);
+
+        function resize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.render(scene, camera);
+        }
+
+        camera.position.z = 8;
+        //camera.rotation.x = 3;
+
+        var lastTimeMsec= null
+
+        const animate = function (nowMsec) {
+            requestAnimationFrame(animate);
+
+            /*scene.traverse(function (cpu){
+                if(cpu.position.x window.innerWidth){
+        
+                }
+                cpu.position.x += 0.01;
+            });*/
+
+            // measure time
+		lastTimeMsec	= lastTimeMsec || nowMsec-1000/60;
+		const deltaMsec	= Math.min(200, nowMsec - lastTimeMsec);
+		lastTimeMsec	= nowMsec;
+		// call each update function
+		updateFcts.forEach(function(updateFn){
+			updateFn(deltaMsec/1000, nowMsec/1000)
+		})
+
+        renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+
+</html>
